@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenTech - Estufa Automatizada & Inteligente</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos Personalizados e Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark-glass {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(20, 83, 45, 0.9) 0%, rgba(15, 23, 42, 0.8) 100%), 
+                        url('https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #22c55e;
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        /* Animações Suaves */
+        .pulse-dot {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- NAV BAR -->
+    <nav class="fixed w-full z-50 glass-card border-b border-slate-200/50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logótipo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                        <i class="fa-solid font-bold fa-leaf text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tight text-slate-900">Green<span class="text-brand-600">Automation</span></span>
+                </div>
+
+                <!-- Links Desktop -->
+                <div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-700">
+                    <a href="#pilares" class="hover:text-brand-600 transition-colors">Sistemas</a>
+                    <a href="#dashboard" class="hover:text-brand-600 transition-colors">Dashboard Demo</a>
+                    <a href="#beneficios" class="hover:text-brand-600 transition-colors">Benefícios</a>
+                    <a href="#faq" class="hover:text-brand-600 transition-colors">FAQ</a>
+                    <a href="#contacto" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-full shadow-md shadow-brand-600/20 transition-all duration-300">
+                        Solicitar Orçamento
+                    </a>
+                </div>
+
+                <!-- Botão Menu Mobile -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-700 hover:text-brand-600 focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden glass-card border-t border-slate-200 px-4 pt-2 pb-6 space-y-3">
+            <a href="#pilares" class="block py-2 text-slate-700 font-medium hover:text-brand-600">Sistemas</a>
+            <a href="#dashboard" class="block py-2 text-slate-700 font-medium hover:text-brand-600">Dashboard Demo</a>
+            <a href="#beneficios" class="block py-2 text-slate-700 font-medium hover:text-brand-600">Benefícios</a>
+            <a href="#faq" class="block py-2 text-slate-700 font-medium hover:text-brand-600">FAQ</a>
+            <a href="#contacto" class="block py-3 text-center bg-brand-600 text-white rounded-xl font-semibold shadow-md">
+                Solicitar Orçamento
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero-bg min-h-screen pt-32 pb-20 flex items-center relative text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-7 space-y-8">
+                    <div class="inline-flex items-center space-x-2 bg-brand-500/20 backdrop-blur-md border border-brand-400/30 px-4 py-2 rounded-full text-brand-300 text-sm font-semibold">
+                        <span class="w-2.5 h-2.5 rounded-full bg-brand-400 pulse-dot"></span>
+                        <span>Tecnologia Agrícola de Precisão</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
+                        O Futuro da Agricultura <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 to-emerald-400">Totalmente Automatizado</span>
+                    </h1>
+
+                    <p class="text-lg sm:text-xl text-slate-300 max-w-2xl font-light leading-relaxed">
+                        Controlo absoluto sobre a <strong class="text-white font-semibold">temperatura, rega e humidade</strong>. Maximize a produtividade da sua estufa com monitorização em tempo real e sensores inteligentes.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <a href="#dashboard" class="inline-flex items-center justify-center space-x-3 bg-brand-500 hover:bg-brand-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-brand-500/30 transition-all duration-300 transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-gauge-high text-lg"></i>
+                            <span>Ver Dashboard Demo</span>
+                        </a>
+                        <a href="#pilares" class="inline-flex items-center justify-center space-x-3 bg-slate-800/80 hover:bg-slate-800 text-white border border-slate-700 font-semibold px-8 py-4 rounded-xl backdrop-blur-md transition-all duration-300">
+                            <span>Saber Mais</span>
+                            <i class="fa-solid fa-arrow-right text-sm"></i>
+                        </a>
+                    </div>
+
+                    <!-- Métricas rápidas no Hero -->
+                    <div class="grid grid-cols-3 gap-4 pt-8 border-t border-slate-700/60">
+                        <div>
+                            <p class="text-3xl font-bold text-brand-400">+45%</p>
+                            <p class="text-xs sm:text-sm text-slate-400">Produtividade</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-bold text-brand-400">-60%</p>
+                            <p class="text-xs sm:text-sm text-slate-400">Consumo de Água</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-bold text-brand-400">24/7</p>
+                            <p class="text-xs sm:text-sm text-slate-400">Controlo Remoto</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ilustração / Visual Hero Card -->
+                <div class="lg:col-span-5">
+                    <div class="dark-glass rounded-3xl p-6 shadow-2xl border border-slate-700/50">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-700/50 mb-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">estufa_zona_01 #online</span>
+                        </div>
+
+                        <!-- Card Preview Mini Status -->
+                        <div class="space-y-4">
+                            <div class="bg-slate-800/60 p-4 rounded-2xl flex items-center justify-between border border-slate-700/30">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-3 bg-orange-500/20 text-orange-400 rounded-xl">
+                                        <i class="fa-solid fa-temperature-half text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-400">Temperatura Alvo</p>
+                                        <p class="text-lg font-bold">23.5 °C</p>
+                                    </div>
+                                </div>
+                                <span class="bg-brand-500/20 text-brand-400 text-xs px-3 py-1 rounded-full border border-brand-500/30">Estável</span>
+                            </div>
+
+                            <div class="bg-slate-800/60 p-4 rounded-2xl flex items-center justify-between border border-slate-700/30">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-3 bg-blue-500/20 text-blue-400 rounded-xl">
+                                        <i class="fa-solid fa-droplet text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-400">Sistema de Rega</p>
+                                        <p class="text-lg font-bold">Gota-a-Gota Ativo</p>
+                                    </div>
+                                </div>
+                                <span class="bg-blue-500/20 text-blue-400 text-xs px-3 py-1 rounded-full border border-blue-500/30">A Irrigar</span>
+                            </div>
+
+                            <div class="bg-slate-800/60 p-4 rounded-2xl flex items-center justify-between border border-slate-700/30">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-3 bg-teal-500/20 text-teal-400 rounded-xl">
+                                        <i class="fa-solid fa-wind text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-400">Humidade do Ar</p>
+                                        <p class="text-lg font-bold">68% RH</p>
+                                    </div>
+                                </div>
+                                <span class="bg-teal-500/20 text-teal-400 text-xs px-3 py-1 rounded-full border border-teal-500/30">Ideal</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- OS 3 PILARES DA AUTOMAÇÃO -->
+    <section id="pilares" class="py-24 bg-slate-100/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-sm font-extrabold uppercase tracking-widest text-brand-600 mb-2">Engenharia Microclimática</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900">Os 3 Pilares da Automatização</p>
+                <p class="mt-4 text-slate-600 text-lg">A nossa tecnologia monitoriza continuamente os fatores críticos para garantir o microclima ideal para as suas culturas.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Pilar 1: Temperatura -->
+                <div class="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-temperature-arrow-up"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Controlo de Temperatura</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">
+                        Gestão térmica inteligente através da abertura automática de janelas de ventilação, acionamento de extratores e sistemas de aquecimento radiante ou aerotérmico.
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-700 font-medium">
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Sensores térmicos multiponto</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Ventilação motorizada automática</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Proteção contra geadas e sobreaquecimento</li>
+                    </ul>
+                </div>
+
+                <!-- Pilar 2: Rega Automatizada -->
+                <div class="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-faucet-drip"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Sistema de Rega Inteligente</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">
+                        Irrigação gota-a-gota e fertirrigação calculadas com base na humidade do solo e evapotranspiração, eliminando o desperdício de água e nutrientes.
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-700 font-medium">
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Higrómetros de solo de alta precisão</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Programação por etapas e zonas</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Deteção de fugas no sistema</li>
+                    </ul>
+                </div>
+
+                <!-- Pilar 3: Humidade -->
+                <div class="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 group">
+                    <div class="w-16 h-16 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-cloud-rain"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Controlo de Humidade</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">
+                        Regulação precisa do vapor de água através de nebulizadores de alta pressão e desumidificadores para prevenir fungos e promover a transpiração ideal das plantas.
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-700 font-medium">
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Nebulização ultra-fina (Fogger)</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Prevenção automatizada de Doenças</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-500 mr-2"></i> Equilíbrio de Humidade Relativa (%RH)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SIMULADOR EM TEMPO REAL / DASHBOARD INTERATIVO -->
+    <section id="dashboard" class="py-20 bg-slate-900 text-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <!-- Cabecalho Dashboard -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 pb-6 border-b border-slate-800 gap-4">
+                <div>
+                    <div class="flex items-center space-x-3 mb-1">
+                        <h2 class="text-3xl font-extrabold tracking-tight">Painel de Controlo da Estufa</h2>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 pulse-dot"></span> Ao Vivo
+                        </span>
+                    </div>
+                    <p class="text-slate-400 text-sm">Simulador em tempo real de sensores e atuadores da Estufa - Zona A</p>
+                </div>
+
+                <!-- Alternar Modo Auto / Manual -->
+                <div class="flex items-center bg-slate-800 p-1.5 rounded-2xl border border-slate-700 self-start md:self-auto">
+                    <button id="mode-auto" onclick="setMode('auto')" class="px-5 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-md">
+                        <i class="fa-solid fa-robot mr-1"></i> Modo Automático
+                    </button>
+                    <button id="mode-manual" onclick="setMode('manual')" class="px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-hand-pointer mr-1"></i> Modo Manual
+                    </button>
+                </div>
+            </div>
+
+            <!-- CARDS DE MÉTRICAS (SENSORES) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                
+                <!-- Sensor Temperatura -->
+                <div class="bg-slate-800/80 p-6 rounded-3xl border border-slate-700/60 shadow-lg relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-slate-400 text-sm font-medium">Temperatura do Ar</span>
+                        <div class="p-2.5 bg-orange-500/10 text-orange-400 rounded-xl">
+                            <i class="fa-solid fa-temperature-high text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="temp-val" class="text-4xl font-extrabold text-white">24.2</span>
+                        <span class="text-xl text-slate-400 font-semibold">°C</span>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Intervalo Ideal: 20°C - 26°C</span>
+                        <span id="temp-status" class="text-emerald-400 font-semibold">Ótimo</span>
+                    </div>
+                </div>
+
+                <!-- Sensor Humidade Ar -->
+                <div class="bg-slate-800/80 p-6 rounded-3xl border border-slate-700/60 shadow-lg relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-slate-400 text-sm font-medium">Humidade do Ar</span>
+                        <div class="p-2.5 bg-teal-500/10 text-teal-400 rounded-xl">
+                            <i class="fa-solid fa-wind text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="hum-val" class="text-4xl font-extrabold text-white">65</span>
+                        <span class="text-xl text-slate-400 font-semibold">%</span>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Intervalo Ideal: 60% - 75%</span>
+                        <span id="hum-status" class="text-emerald-400 font-semibold">Normal</span>
+                    </div>
+                </div>
+
+                <!-- Sensor Humidade Solo -->
+                <div class="bg-slate-800/80 p-6 rounded-3xl border border-slate-700/60 shadow-lg relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-slate-400 text-sm font-medium">Humidade do Solo</span>
+                        <div class="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl">
+                            <i class="fa-solid fa-water text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="soil-val" class="text-4xl font-extrabold text-white">42</span>
+                        <span class="text-xl text-slate-400 font-semibold">%</span>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Mínimo para Rega: 40%</span>
+                        <span id="soil-status" class="text-emerald-400 font-semibold">Adequado</span>
+                    </div>
+                </div>
+
+                <!-- Estado da Rega -->
+                <div class="bg-slate-800/80 p-6 rounded-3xl border border-slate-700/60 shadow-lg relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-slate-400 text-sm font-medium">Sistema de Rega</span>
+                        <div id="water-icon-bg" class="p-2.5 bg-slate-700 text-slate-400 rounded-xl transition-colors">
+                            <i class="fa-solid fa-shower text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="water-status-text" class="text-2xl font-bold text-slate-300">Inativo</span>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Válvula Principal</span>
+                        <span id="water-subtext" class="text-slate-400">Em Espera</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PAINEL DE CONTROLO MANUAL E GRÁFICO DINÂMICO -->
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- CONTROLOS / ATUADORES -->
+                <div class="lg:col-span-4 bg-slate-800/80 p-6 rounded-3xl border border-slate-700/60 space-y-6">
+                    <h3 class="text-lg font-bold text-white border-b border-slate-700 pb-3 flex items-center justify-between">
+                        <span>Atuadores do Sistema</span>
+                        <span id="manual-notice" class="text-xs text-amber-400 hidden font-normal"><i class="fa-solid fa-triangle-exclamation"></i> Modo Manual Ativo</span>
+                    </h3>
+
+                    <!-- Control: Ventilação -->
+                    <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded-2xl border border-slate-700/40">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-slate-800 rounded-xl text-teal-400">
+                                <i class="fa-solid fa-fan"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold">Ventilação / Extratores</p>
+                                <p id="fan-sub" class="text-xs text-slate-400">Desligado</p>
+                            </div>
+                        </div>
+                        <label class="custom-switch">
+                            <input type="checkbox" id="switch-fan" onchange="toggleActuator('fan', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Control: Rega Manual -->
+                    <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded-2xl border border-slate-700/40">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-slate-800 rounded-xl text-blue-400">
+                                <i class="fa-solid fa-faucet-drip"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold">Rega de Emergência</p>
+                                <p id="water-sub" class="text-xs text-slate-400">Desligado</p>
+                            </div>
+                        </div>
+                        <label class="custom-switch">
+                            <input type="checkbox" id="switch-water" onchange="toggleActuator('water', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Control: Aquecimento -->
+                    <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded-2xl border border-slate-700/40">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-slate-800 rounded-xl text-orange-400">
+                                <i class="fa-solid fa-fire"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold">Sistema de Aquecimento</p>
+                                <p id="heat-sub" class="text-xs text-slate-400">Desligado</p>
+                            </div>
+                        </div>
+                        <label class="custom-switch">
+                            <input type="checkbox" id="switch-heat" onchange="toggleActuator('heat', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="p-4 bg-brand-500/10 border border-brand-500/20 rounded-2xl text-xs text-brand-300 leading-relaxed">
+                        <i class="fa-solid fa-circle-info mr-1"></i> No <strong>Modo Automático</strong>, os sensores tomam decisões autónomas ativando o aquecimento, rega ou ventilação sempre que os níveis saem dos parâmetros ideais.
+                    </div>
+                </div>
+
+                <!-- GRÁFICO CHART.JS DINÂMICO -->
+                <div class="lg:col-span-8 bg-slate-800/80 p-6 rounded-3xl border border-slate-700/60">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white">Histórico e Tendência em Tempo Real</h3>
+                        <span class="text-xs text-slate-400 font-mono">Leitura a cada 3s</span>
+                    </div>
+                    <div class="relative w-full h-72 sm:h-80">
+                        <canvas id="greenhouseChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DE BENEFÍCIOS -->
+    <section id="beneficios" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-sm font-extrabold uppercase tracking-widest text-brand-600 mb-2">Porquê Automatizar?</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900">Vantagens de uma Estufa Automatizada</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Benefício 1 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-100 space-y-4">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-hand-holding-droplet"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900">Poupança Extrema de Água</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Reduza até 60% do consumo de água ao irrigar apenas quando os sensores de solo detetam necessidade real.
+                    </p>
+                </div>
+
+                <!-- Benefício 2 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-100 space-y-4">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900">Maior Produtividade</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Culturas a crescer num microclima estabilizado desenvolvem-se até 35% mais rápido e com maior qualidade.
+                    </p>
+                </div>
+
+                <!-- Benefício 3 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-100 space-y-4">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900">Acesso Remoto 24/7</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Controle e monitorize a estufa a partir do smartphone ou computador, esteja onde estiver, com alertas em tempo real.
+                    </p>
+                </div>
+
+                <!-- Benefício 4 -->
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-100 space-y-4">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900">Sustentabilidade</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Diminuição do uso de pesticidas por prevenção de pragas e otimização do consumo energético da exploração agrícola.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ (ACCORDION) -->
+    <section id="faq" class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-extrabold text-slate-900">Perguntas Frequentes (FAQ)</h2>
+                <p class="text-slate-600 mt-2">Tire as suas dúvidas sobre a instalação e funcionamento da estufa inteligente.</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <button onclick="toggleFaq('faq-1')" class="w-full text-left p-5 font-semibold text-slate-900 flex justify-between items-center focus:outline-none">
+                        <span>É possível adaptar o sistema a uma estufa já existente?</span>
+                        <i id="faq-1-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="faq-1" class="hidden px-5 pb-5 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-3">
+                        Sim! Os nossos módulos de sensores e atuadores são universais e podem ser instalados em estufas de qualquer dimensão, sejam estruturas de filme plástico, vidro ou policarbonato.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <button onclick="toggleFaq('faq-2')" class="w-full text-left p-5 font-semibold text-slate-900 flex justify-between items-center focus:outline-none">
+                        <span>O que acontece se houver uma falha de energia ou internet?</span>
+                        <i id="faq-2-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="faq-2" class="hidden px-5 pb-5 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-3">
+                        O controlador local mantém as rotinas de rega e ventilação guardadas na memória interna mesmo sem internet. Para falhas elétricas, oferecemos opção de bateria de apoio e painéis solares.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    <button onclick="toggleFaq('faq-3')" class="w-full text-left p-5 font-semibold text-slate-900 flex justify-between items-center focus:outline-none">
+                        <span>Como funciona o controlo automático da rega?</span>
+                        <i id="faq-3-icon" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="faq-3" class="hidden px-5 pb-5 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-3">
+                        Sensores capacitivos inseridos na zona radicular das plantas medem continuamente a humidade do solo. Quando o nível cai abaixo do limite programado, a eletroválvula abre automaticamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORMULÁRIO DE CONTACTO / ORÇAMENTO -->
+    <section id="contacto" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-br from-brand-900 via-slate-900 to-slate-900 rounded-3xl p-8 sm:p-12 shadow-2xl text-white grid lg:grid-cols-12 gap-12">
+                
+                <div class="lg:col-span-5 space-y-6">
+                    <span class="text-brand-400 font-extrabold uppercase text-xs tracking-widest">Contacto Directo</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Solicite um Orçamento Personalizado</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Preencha o formulário e a nossa equipa de engenharia agrotech entrará em contacto para desenhar a solução ideal para a sua produção.
+                    </p>
+
+                    <div class="space-y-4 pt-4 text-sm text-slate-300">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-phone text-brand-400 text-lg"></i>
+                            <span>+351 800 123 456 (Chamada Gratuita)</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-envelope text-brand-400 text-lg"></i>
+                            <span>contacto@greenautomation.pt</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-location-dot text-brand-400 text-lg"></i>
+                            <span>Parque Tecnológico Agrotech, Portugal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário -->
+                <div class="lg:col-span-7 bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-white/10">
+                    <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-200">Nome Completo</label>
+                                <input type="text" required placeholder="Ex: João Silva" class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-200">E-mail</label>
+                                <input type="email" required placeholder="joao@exemplo.pt" class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-200">Tamanho da Estufa (m²)</label>
+                                <input type="number" placeholder="Ex: 250" class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1 text-slate-200">Tipo de Cultura</label>
+                                <input type="text" placeholder="Ex: Tomate, Morango, Ervas" class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-200">Mensagem / Observações</label>
+                            <textarea rows="4" placeholder="Descreva as suas necessidades de automação..." class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-brand-500/30">
+                            Enviar Pedido de Orçamento
+                        </button>
+                    </form>
+
+                    <!-- Feedback Mensagem de Sucesso -->
+                    <div id="form-success" class="hidden mt-4 p-4 bg-emerald-500/20 border border-emerald-500 text-emerald-300 rounded-xl text-center text-sm">
+                        <i class="fa-solid fa-circle-check mr-2"></i> Pedido enviado com sucesso! Entraremos em contacto brevemente.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- RODAPÉ -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-leaf text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">GreenAutomation</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Sistemas de automação e microclima inteligente para estufas agrícolas de alta performance.
+                    </p>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-semibold text-sm mb-4">Navegação</h5>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#pilares" class="hover:text-white">Sistemas de Automatização</a></li>
+                        <li><a href="#dashboard" class="hover:text-white">Simulador Dashboard</a></li>
+                        <li><a href="#beneficios" class="hover:text-white">Benefícios</a></li>
+                        <li><a href="#faq" class="hover:text-white">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-semibold text-sm mb-4">Sistemas</h5>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" class="hover:text-white">Controlo Térmico</a></li>
+                        <li><a href="#" class="hover:text-white">Irrigação Gota-a-Gota</a></li>
+                        <li><a href="#" class="hover:text-white">Gestão de Humidade Relativa</a></li>
+                        <li><a href="#" class="hover:text-white">Sensores IoT para Agricultura</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-semibold text-sm mb-4">Redes Sociais</h5>
+                    <div class="flex space-x-3 text-lg">
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-slate-900 text-xs text-center text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p>&copy; 2026 GreenAutomation. Todos os direitos reservados.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-slate-400">Política de Privacidade</a>
+                    <a href="#" class="hover:text-slate-400">Termos de Serviço</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- 1. LÓGICA DO MENU MOBILE ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- 2. LÓGICA DO ACCORDION FAQ ---
+        function toggleFaq(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`${id}-icon`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // --- 3. LÓGICA DO FORMULÁRIO DE CONTACTO ---
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const form = document.getElementById('contact-form');
+            const successMsg = document.getElementById('form-success');
+            
+            form.reset();
+            successMsg.classList.remove('hidden');
+            setTimeout(() => {
+                successMsg.classList.add('hidden');
+            }, 5000);
+        }
+
+        // --- 4. SIMULADOR DO DASHBOARD EM TEMPO REAL ---
+        
+        // Estado inicial do sistema
+        let currentMode = 'auto'; // 'auto' | 'manual'
+        let state = {
+            temp: 24.2,
+            hum: 65,
+            soil: 42,
+            fan: false,
+            water: false,
+            heat: false
+        };
+
+        // Histórico de dados para o Chart.js
+        const maxPoints = 12;
+        const timeLabels = Array.from({length: maxPoints}, (_, i) => {
+            let d = new Date(Date.now() - (maxPoints - 1 - i) * 3000);
+            return d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        });
+        const tempData = Array(maxPoints).fill(24.2);
+        const humData = Array(maxPoints).fill(65);
+
+        // Inicialização do Gráfico Chart.js
+        let ctx = document.getElementById('greenhouseChart').getContext('2d');
+        let greenhouseChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [
+                    {
+                        label: 'Temperatura (°C)',
+                        data: tempData,
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Humidade do Ar (%)',
+                        data: humData,
+                        borderColor: '#14b8a6',
+                        backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#94a3b8', font: { size: 10 } }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'Temp (°C)', color: '#f97316' },
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#f97316' },
+                        min: 15,
+                        max: 35
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Humidade (%)', color: '#14b8a6' },
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#14b8a6' },
+                        min: 30,
+                        max: 90
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#e2e8f0', font: { size: 12 } }
+                    }
+                }
+            }
+        });
+
+        // Função para Alternar Modo
+        function setMode(mode) {
+            currentMode = mode;
+            const autoBtn = document.getElementById('mode-auto');
+            const manualBtn = document.getElementById('mode-manual');
+            const manualNotice = document.getElementById('manual-notice');
+
+            if (mode === 'auto') {
+                autoBtn.className = "px-5 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-md";
+                manualBtn.className = "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
+                manualNotice.classList.add('hidden');
+            } else {
+                manualBtn.className = "px-5 py-2 rounded-xl text-xs font-bold transition-all bg-amber-500 text-slate-900 shadow-md";
+                autoBtn.className = "px-5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
+                manualNotice.classList.remove('hidden');
+            }
+        }
+
+        // Função de Controlo Manual dos Atuadores
+        function toggleActuator(actuator, isChecked) {
+            state[actuator] = isChecked;
+            if (currentMode === 'auto') {
+                // Se o utilizador mexer manualmente num interruptor, muda para Modo Manual automaticamente
+                setMode('manual');
+            }
+            updateActuatorUI();
+        }
+
+        // Atualizar textos dos Switches
+        function updateActuatorUI() {
+            document.getElementById('switch-fan').checked = state.fan;
+            document.getElementById('fan-sub').innerText = state.fan ? 'Ativo (Arrefecendo)' : 'Desligado';
+            document.getElementById('fan-sub').className = state.fan ? 'text-xs text-teal-400 font-bold' : 'text-xs text-slate-400';
+
+            document.getElementById('switch-water').checked = state.water;
+            document.getElementById('water-sub').innerText = state.water ? 'Ativo (Irrigando)' : 'Desligado';
+            document.getElementById('water-sub').className = state.water ? 'text-xs text-blue-400 font-bold' : 'text-xs text-slate-400';
+
+            document.getElementById('switch-heat').checked = state.heat;
+            document.getElementById('heat-sub').innerText = state.heat ? 'Ativo (Aquecendo)' : 'Desligado';
+            document.getElementById('heat-sub').className = state.heat ? 'text-xs text-orange-400 font-bold' : 'text-xs text-slate-400';
+
+            // Card da Rega
+            const waterText = document.getElementById('water-status-text');
+            const waterSub = document.getElementById('water-subtext');
+            const waterBg = document.getElementById('water-icon-bg');
+
+            if (state.water) {
+                waterText.innerText = 'Ativa';
+                waterText.className = 'text-2xl font-bold text-blue-400';
+                waterSub.innerText = 'Irrigação a decorrer';
+                waterSub.className = 'text-blue-400 font-semibold';
+                waterBg.className = 'p-2.5 bg-blue-500/20 text-blue-400 rounded-xl';
+            } else {
+                waterText.innerText = 'Inativo';
+                waterText.className = 'text-2xl font-bold text-slate-300';
+                waterSub.innerText = 'Em Espera';
+                waterSub.className = 'text-slate-400';
+                waterBg.className = 'p-2.5 bg-slate-700 text-slate-400 rounded-xl';
+            }
+        }
+
+        // Loop Principal de Simulação (Executa a cada 3 segundos)
+        setInterval(() => {
+            // Lógica do Modo Automático (Termóstato & Higróstato inteligente)
+            if (currentMode === 'auto') {
+                // Auto Rega se solo tiver humidade baixa (< 38%)
+                if (state.soil < 38) state.water = true;
+                if (state.soil > 55) state.water = false;
+
+                // Auto Ventilação se Temp > 26°C ou Humidade > 75%
+                if (state.temp > 26.0 || state.hum > 75) state.fan = true;
+                else if (state.temp <= 23.5 && state.hum <= 68) state.fan = false;
+
+                // Auto Aquecimento se Temp < 20°C
+                if (state.temp < 20.0) state.heat = true;
+                else if (state.temp >= 23.0) state.heat = false;
+
+                updateActuatorUI();
+            }
+
+            // Simulação física de flutuação dos valores
+            // Efeito do Aquecedor
+            if (state.heat) state.temp += 0.4;
+            // Efeito da Ventilação
+            if (state.fan) {
+                state.temp -= 0.3;
+                state.hum -= 0.5;
+            }
+            // Efeito da Rega
+            if (state.water) {
+                state.soil += 1.5;
+                state.hum += 0.4;
+            } else {
+                // Secagem natural do solo
+                state.soil -= 0.2;
+            }
+
+            // Flutuação aleatória ambiental natural
+            state.temp += (Math.random() - 0.48) * 0.2;
+            state.hum += (Math.random() - 0.5) * 0.3;
+
+            // Limites de segurança da simulação
+            state.temp = Math.max(16, Math.min(36, state.temp));
+            state.hum = Math.max(35, Math.min(92, state.hum));
+            state.soil = Math.max(20, Math.min(85, state.soil));
+
+            // Atualização do DOM dos Sensores
+            document.getElementById('temp-val').innerText = state.temp.toFixed(1);
+            document.getElementById('hum-val').innerText = Math.round(state.hum);
+            document.getElementById('soil-val').innerText = Math.round(state.soil);
+
+            // Estados e Cores dos Avisos
+            const tempStatus = document.getElementById('temp-status');
+            if (state.temp > 28) {
+                tempStatus.innerText = 'Elevada!';
+                tempStatus.className = 'text-orange-400 font-bold';
+            } else if (state.temp < 19) {
+                tempStatus.innerText = 'Baixa!';
+                tempStatus.className = 'text-blue-400 font-bold';
+            } else {
+                tempStatus.innerText = 'Ótimo';
+                tempStatus.className = 'text-emerald-400 font-semibold';
+            }
+
+            const soilStatus = document.getElementById('soil-status');
+            if (state.soil < 35) {
+                soilStatus.innerText = 'Seco (Necessita Rega)';
+                soilStatus.className = 'text-amber-400 font-bold';
+            } else {
+                soilStatus.innerText = 'Adequado';
+                soilStatus.className = 'text-emerald-400 font-semibold';
+            }
+
+            // Atualizar Dados no Gráfico
+            const nowTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            greenhouseChart.data.labels.shift();
+            greenhouseChart.data.labels.push(nowTime);
+
+            greenhouseChart.data.datasets[0].data.shift();
+            greenhouseChart.data.datasets[0].data.push(parseFloat(state.temp.toFixed(1)));
+
+            greenhouseChart.data.datasets[1].data.shift();
+            greenhouseChart.data.datasets[1].data.push(Math.round(state.hum));
+
+            greenhouseChart.update();
+
+        }, 3000);
+
+    </script>
+</body>
+</html>
